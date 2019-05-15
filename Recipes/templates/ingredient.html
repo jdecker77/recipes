@@ -1,0 +1,12 @@
+{% extends "navbar.html" %}
+{% block body %}
+    <div class='container'>
+        <div class='row'>
+            <div class=''>
+                {% for row in ingredient %}
+                    <h4>{{ row.name }}</h4>
+                {% endfor %}
+            </div>
+        </div>
+    </div>  
+{% endblock %}

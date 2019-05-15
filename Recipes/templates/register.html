@@ -1,0 +1,28 @@
+{% if not session.username %}
+    {% extends "layout.html" %}
+    {% block body %}
+    <div class="bg">
+        <div class="container">
+            <div class="row">
+                <div class='twelve columns'>
+                    <form class="form-signin" action="{{ url_for('register') }}" method="post">
+                        <img class="mb-4" src="/docs/4.3/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+                        <h3 id="pageTitle"><i class="fas fa-carrot"></i> What's For Dinner?</h3>
+                        <h5>Register</h5>
+
+                        <label for="username" class="sr-only">Username</label>
+                        <input type="text" name='username' id="username" class="form-control" placeholder="Username" required autofocus><br>
+                          
+                        <label for="password" class="sr-only">Password</label>
+                        <input type="password" name='password' id="password" class="form-control" placeholder="Password" required><br>
+                          
+                        <button class="button-primary" type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+{% else %}
+    {{ redirect(url_for('view_recipes')) }}
+{% endif %}

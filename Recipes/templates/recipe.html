@@ -1,0 +1,205 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div id="tmp"></div>
+<div class="bg">
+    <div id = "recipe-container" class='container'>
+        <div class='row'>
+            
+            {% set data = recipe.single().data() %}
+            <div class="nine columns">
+                <h4 class="rec_title">{{ data.title }}</h4>
+                <p>{{ data.description }}</p>
+            </div>
+        </div>
+  
+
+        <div class='row'>
+            <div class="four columns">
+                {#<!-- <p><i id="recipe_image" class="fas fa-pizza-slice"></i></p> -->#}
+                <img id="recipe_image" src="{{ url_for('static', filename='dinner.png') }}">
+            </div>
+
+            <div class="three columns">
+                <p><strong>Details</strong></p>
+               <p><i class="fas fa-user-edit"></i>: {{ author.single()['author'] }}</p>
+               <p><i class="fas fa-utensils"></i>: {{ data.skill_level }}</p>   
+               <p><i class="fas fa-clock"></i>: {{ data.cooking_time+data.prep_time }} minutes</p>   
+               <p><i class="fas fa-chart-pie"></i>: {{ data.servings }} servings</p>
+               <p ><i class="fas fa-thumbs-up"></i>: <span id="ratings">{{ data.ratings }}</span> likes</p>        
+            </div>
+
+            <div class="three columns">
+                <p><strong>Nutrition:</strong></p>
+                {% set nutrish = nutrition.data() %}
+                <ul>
+                    <p><li class="list-group-item">Calories: {{ nutrish[0]["Calories"]  }} Kcal</li></p>
+                    <p><li class="list-group-item">Carbohydrates: {{ nutrish[0]["Carbohydrates"] }} g</li></p>
+                    <p><li class="list-group-item">Protein: {{ nutrish[0]["Protein"]  }} g</li></p>
+                    <p><li class="list-group-item">Fat: {{ nutrish[0]["Fat"]  }} g</li></p>
+                    <p><li class="list-group-item">Saturated Fat: {{ nutrish[0]["Saturated_Fat"]  }} g</li></p>
+                    <p><li class="list-group-item">Salt: {{ nutrish[0]["Carbohydrates"]  }} g</li></p>
+                    <p><li class="list-group-item">Added Sugar: {{ nutrish[0]["Carbohydrates"]  }} g</li></p>
+                </ul>
+            </div>
+
+            <div class="two columns">
+                <p><strong>Diet Types:</strong></p>
+                <ul>
+                {% for row in diet_types %}
+                    <li class="list-group-item">
+                        {{ row.value() }}
+                    </li>
+                {% endfor %}
+                </ul>
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class='row'>
+            <div class="twelve columns"> 
+
+            {% if session.username %}
+                <form id="userForm" form class="form-recipe">
+                    
+                    <button id="liked" class=" btn btn-inactive button-action" type="submit" name="likedButton" value="liked"><i class="fas fa-thumbs-up"></i></button> 
+                    <button id="like" class=" btn button-action" type="submit" name="likeButton" value="like"><i class="fas fa-thumbs-up"></i>Like Recipe</button> 
+
+                    <button id="remove" class=" btn btn-alt button-action" type="submit" name="addButton"  value="remove"><i class="fas fa-minus"></i>Remove Recipe</button>
+                    <button id="save" class=" btn button-action" type="submit" name="addButton"  value="save"><i class="fas fa-plus"></i>Save to My Recipes</button>                  
+
+                    <button id="view" class=" btn button-action" type="button" name="viewButton" value="view"><i class="fas fa-share"></i>View Similar Recipes</button>
+
+                </form>
+            {% endif %}
+            </div>
+        </div>
+
+
+        <div class='row'>
+
+            <div class="three columns">
+                <h5>Ingredients</h5>
+                <ul class='list-group'>
+                {% for row in ingredients %}
+                    <li class="list-group-item">
+                        {{ row.name }}</a><br>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+
+            
+            <div class="three columns">
+                <h5>Collections</h5>
+                <ul class='list-group'>
+                {% for row in collections %}
+                    <li class="list-group-item">
+                        <!-- <a href="{{ url_for('view_collection_detail', collection_name=row.name) }}"> -->
+                        {{ row.name }}<br>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+
+            <div class="three columns">
+                <h5>Keywords</h5>
+                <ul class='list-group'>
+                {% for row in keywords %}
+                    <li class="list-group-item">
+                        <!-- <a href="{{ url_for('view_collection_detail', collection_name=row.name) }}"> -->
+                        {{ row.name }}<br>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+
+            <div class="three columns">
+                <h5>Courses</h5>
+                <ul class='list-group'>
+                {% for row in courses %}
+                
+                    <li class="list-group-item">
+                        <!-- <a href="{{ url_for('view_collection_detail', collection_name=row.name) }}"> -->
+                        {{ row.name }}<br>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready( function () {
+
+        var likes = "{{ user_likes.single().value() }}"
+        if (likes === 'True') {
+            $("#like").hide();
+        } else {
+            $("#liked").hide(); 
+        }
+
+        var saved = "{{ user_saved.single().value() }}"
+        if (saved === 'True') {
+            $("#save").hide();
+        } else {
+            $("#remove").hide(); 
+        }
+            
+        $('#view').click(function() {   
+            var recipe_id = "{{ data.id }}";
+            var link = "similar";
+            var url = "/recipes/"+recipe_id+"/"+link;
+            // console.log(url)
+            // window.location.assign(url);
+            window.location.href = url;
+        });
+        
+        $('#userForm').submit( function () {
+            var button_id = $(document.activeElement).val();
+            var recipe_id = "{{ data.id }}";
+            var user_id = "{{ session.username }}";
+
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('submit') }}",
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                data: JSON.stringify({
+                    'button': button_id,
+                    'recipe': recipe_id,
+                    'user': user_id
+                }),
+                success: function(response){
+                    if (response.button == "like") {
+                        $("#ratings").text(response.likes);
+                        $('#like').hide();
+                        $('#liked').show();
+                    } else if (response.button == "save") {
+                        $('#save').hide();
+                        $('#remove').show();
+                    } else if (response.button == "remove") {
+                        $('#save').show();
+                        $('#remove').hide();
+                    } else {
+                        console.log("oopsy");
+                    }
+                    // console.log(response.button);
+                },
+                error: function(error){
+                    console.log(error);
+                }
+             });
+            event.preventDefault();
+        });
+    });
+</script>
+
+{% endblock %}

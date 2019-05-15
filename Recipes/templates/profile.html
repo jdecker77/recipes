@@ -1,0 +1,61 @@
+{% extends "navbar.html" %}
+{% block body %}
+    <div class='container'>
+        <div class="row">
+            <div class='twelve columns'>
+        {% if session.username %}
+            {% if session.username == username %}
+
+            <h4>{{ username }}'s Recipes:</h4>
+                <div id="form2_wrap">
+                    <form class="form-recipes-search" action="{{ url_for('view_recipes') }}" method="post">
+                        <div class="pager row contents">
+                            <div class="ten columns">
+                                <i class="fas fa-backward first"></i>
+                                <i class="fas fa-angle-left prev"></i>
+                                <span class="pagedisplay"></span> <!-- text output -->
+                                <i class="fas fa-angle-right next"></i>
+                                <i class="fas fa-forward last"></i>
+                            </div>
+                            <div class="two columns">
+                                <p>Start Over <a href="{{ url_for('view_recipes') }}"><i class="fas fa-times-circle"></i></a> </p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <table id='table' class="tablesorter table-recipes">
+                      <thead>
+                        <tr>
+                          <th>Recipe</th>
+                          <th>Cooking Time</th>
+                          <th>Prep Time</th>
+                          <th>Skill Level</th>
+                          <th>Likes</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% if recipes %}
+                            {% for row in recipes %}
+                                <tr>
+                                  <td><a href="{{ url_for('view_recipe_detail', recipe_id=row.id) }}">{{ row.title }}</a><br></td>
+                                  <td>{{ row.cooking_time }}</td>
+                                  <td>{{ row.prep_time }}</td>
+                                  <td>{{ row.skill_level }}</td>
+                                  <td>{{ row.ratings }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                      </tbody>
+                    </table>
+                
+            </div>
+        </div>
+    
+
+    </div>
+    <script type="text/javascript"src="{{ url_for('static', filename='table.js') }}"></script>
+         
+        {% endif %}
+    {% endif %}
+{% endblock %}
