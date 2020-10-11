@@ -3,15 +3,16 @@
 <div class="bg">
     <div id = "recipes-container" class='container'>
         <div class="row">
-            <div class=''>
+            <div class='stretch'>
                 
                 {% if not recipes %}
                     <div id="form1_wrap">
                         <form class="form-recipes-search form-signin" action="{{ url_for('view_recipes') }}" method="post">
                           
                             <div class="row">
-                                <h4>What's for dinner?</h4>
+                                
                                 <div id="recipe_search_select" >
+                                    <h4>What's for dinner?</h4>
                                     <p>How do you you want to search for recipes?</p>
                                         <label for="start_option"><span></span> Show me recipes by:</label>
                                         <select class="search_select" name="start_option" id="start_option">

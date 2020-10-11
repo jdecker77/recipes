@@ -25,9 +25,14 @@ def GetDBDriver():
         with open(os.path.join(PROJ_ROOT, 'config.txt')) as infile:
             keys = infile.read().split('\n')
 
+        # URL = 'bolt://recipes:7687'
+        # bolt://localhost:7687
         URL = keys[0]
         USER = keys[1]
         PASS = keys[2]
+        # print('url:',URL)
+        # print('user:',USER)
+        # print('pass:',PASS)
 
         drvr = Driver(URL,USER,PASS)
 

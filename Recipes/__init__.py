@@ -1,2 +1,3 @@
-from .views import app
-# from .models import Driver
+from .views import recipes
+import os
+recipes.secret_key = os.urandom(24)

@@ -5,20 +5,20 @@ from flask import Flask, request, session, redirect, url_for, render_template, f
 from functools import wraps
 import json
 
-# Application Definition
+# recipeslication Definition
 # ___________________________________________________________________________________________
 
-app = Flask(__name__)
+recipes = Flask(__name__)
 
 
 
 # Error Handling
 # ___________________________________________________________________________________________
-@app.errorhandler(404)
+@recipes.errorhandler(404)
 def not_found(error):
     return render_template('error.html'), 404
 
-@app.errorhandler(400)
+@recipes.errorhandler(400)
 def handle_bad_request(e):
     return 'You made a very bad request!', 400
 
@@ -34,14 +34,14 @@ def login_required(f):
 
 # Home
 # ___________________________________________________________________________________________
-@app.route('/')
+@recipes.route('/')
 def index():
     return render_template('index.html')
 
 
 # Recipes
 # ___________________________________________________________________________________________
-@app.route('/recipes', methods=['GET', 'POST'])
+@recipes.route('/recipes', methods=['GET', 'POST'])
 # @login_required
 def view_recipes():
     if request.method == 'GET':
@@ -89,7 +89,7 @@ def view_recipes():
     else:
         return render_template('index.html')
 
-@app.route('/recipes/<recipe_id>', methods=['GET', 'POST'])
+@recipes.route('/recipes/<recipe_id>', methods=['GET', 'POST'])
 def view_recipe_detail(recipe_id):
     if request.method == 'GET':
         username = session.get('username')
@@ -127,19 +127,23 @@ def view_recipe_detail(recipe_id):
         return render_template('recipe.html')
 
 
-@app.route('/recipes/<recipe_id>/<link>', methods=['GET'])
+@recipes.route('/recipes/<recipe_id>/<link>', methods=['GET'])
 def view_recipe_link(recipe_id,link):
     # flash(link)
     referer = request.headers['Referer']
-    if referer[:30] == "http://127.0.0.1:5000/recipes/":
-        search_query = int(referer[30:])
+    search_query = int(referer[30:])
+    # if referer[:30] == "http://127.0.0.1:5000/recipes/":
+    #     search_query = int(referer[30:])
+    # else:
+    #     search_query = ''
+        # print('Missing referer - line 134')
 
     if link == "similar":
         recipes = Recipe(search_query).GetSimilarRecipes()
     return render_template('recipes.html', recipes=recipes,page="similar")
 
 
-@app.route('/submit/', methods=['POST'])
+@recipes.route('/submit/', methods=['POST'])
 def submit():
     if request.method == 'POST':
         if request.is_json:
@@ -177,11 +181,11 @@ def submit():
 
 # Ingredients
 # ___________________________________________________________________________________________
-@app.route('/ingredients')
+@recipes.route('/ingredients')
 def view_ingredients():
     return render_template('ingredients.html') 
 
-@app.route('/ingredients/<ingredient_name>')
+@recipes.route('/ingredients/<ingredient_name>')
 def view_ingredient_detail(ingredient_name):
     if Ingredient(ingredient_name).IsIngredient().single()['exists']:
         ingredient = Ingredient(ingredient_name).GetIngredientByName()
@@ -190,11 +194,11 @@ def view_ingredient_detail(ingredient_name):
         redirect(url_for('index'))
 
 
-@app.route('/collections')
+@recipes.route('/collections')
 def view_collections():
     return render_template('collections.html') 
 
-@app.route('/collections/<collection_name>')
+@recipes.route('/collections/<collection_name>')
 def view_collection_detail(collection_name):
     if Collection(collection_name).IsCollection().single()['exists']:
         collection = Collection(collection_name).GetCollectionByName()
@@ -206,7 +210,7 @@ def view_collection_detail(collection_name):
 
 # User
 # ___________________________________________________________________________________________
-@app.route('/register', methods=['GET','POST'])
+@recipes.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -225,7 +229,7 @@ def register():
 
     return render_template('register.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+@recipes.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -240,13 +244,13 @@ def login():
 
     return render_template('login.html')
 
-@app.route('/logout')
+@recipes.route('/logout')
 def logout():
     session.pop('username', None)
     flash('Logged out.')
     return redirect(url_for('index'))
 
-@app.route('/profile/<username>', methods=['GET','POST'])
+@recipes.route('/profile/<username>', methods=['GET','POST'])
 # @login_required
 def profile(username):
     # flash(request.headers)

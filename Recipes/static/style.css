@@ -157,6 +157,10 @@ label{
   margin-bottom: 0;
 }
 
+.stretch{
+  width:100%;
+}
+
 .no_bar{
   margin-top:1em;
 }
@@ -168,9 +172,11 @@ label{
   padding: 0;
   overflow: hidden;
   background-color: white;
+  width: 100%;
 }
 
 .nav-item{
+  /*width:25%;*/
   float: left;
 }
 
@@ -437,6 +443,7 @@ div.no_ml{
   padding-left:2rem;
   padding-right:2rem;
   padding-top:2rem;
+  padding-bottom:2rem;  /* Added this Sept 20*/
   border-right: 1px solid #ccc
   border-left: 1px solid #ccc
 }
